@@ -7,15 +7,11 @@ class ToDoList extends React.Component {
         super(props);
         this.state = {
             value: '',
-            listdata: [
-                {name: 'Kevin', age: '23'}, 
-                {name: 'John', age: '25'}, 
-                {name: 'Eric', age: '20'}, 
-                {name: 'Justin', age: '18'}, 
-            ]
+            listData: []
         }
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event){
@@ -24,21 +20,22 @@ class ToDoList extends React.Component {
         });
     }
     
-    handleSubmit(event) {
+    handleSubmit() {
         console.log('An essay was submitted: ' + this.state.value);
-        this.setState({
-            value: '',
-        });
+        let { listData, value } = this.state;
+        listData.push(value);
+        console.log(listData);
     }
 
     render() {
-        const list = this.state.listdata;
+        const list = this.state.listData;
 
-        const dataList = list.map((name, index) =>{
+        const dataList = list.map((todo, index) =>{
              
             return (
-                <ul key={index} className='data-list'>Name: {name.name}, Age: {name.age}</ul>
+                <ul key={index} className='data-list'>{todo}</ul>
             );
+            
         });
 
         return(
