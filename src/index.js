@@ -24,7 +24,10 @@ class ToDoList extends React.Component {
         console.log('An essay was submitted: ' + this.state.value);
         let { listData, value } = this.state;
         listData.push(value);
-        console.log(listData);
+
+        this.setState({
+            listData: listData
+        });
     }
 
     render() {
