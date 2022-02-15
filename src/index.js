@@ -2,8 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Form, Row, Col }  from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
+
 class ToDoList extends React.Component {
-    constructor(props){
+
+    constructor(props) {
+
         super(props);
         this.state = {
             value: '',
@@ -12,21 +18,91 @@ class ToDoList extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCheckAll = this.handleCheckAll.bind(this);
+        this.handleOnCheck = this.handleOnCheck.bind(this);
+        this.handleDone = this.handleDone.bind(this);
     }
 
-    handleChange(event){
+    handleChange(event) {
+
         this.setState({
             value: event.target.value
         });
     }
     
     handleSubmit() {
-        console.log('An essay was submitted: ' + this.state.value);
+
         let { listData, value } = this.state;
-        listData.push(value);
+        listData.push({
+            name: value,
+            checked: false,
+            done: false,
+        });
 
         this.setState({
-            listData: listData
+            listData: listData,
+            value: '',
+        });
+    }
+
+    handleCheckAll() {
+
+        const list = this.state.listData;
+        const dataList = list.map((todo, index) => {
+            
+            return Object.assign({}, todo, {
+                checked: true, 
+            });
+        });
+
+        this.setState({
+            listData: dataList,
+        });
+    }
+
+    handleOnCheck(event, position) {
+
+        const checked = event.target.checked;
+        const list = this.state.listData;
+
+        const dataList = list.map((todo, index) => {
+            
+            if(position === index){
+                if(checked){
+                    return Object.assign({}, todo, {
+                        checked: true,
+                    });
+                }
+                else{
+                    return Object.assign({}, todo, {
+                        checked: false,
+                    });
+                }
+            }
+            
+            return todo;
+        });
+
+        this.setState({
+            listData: dataList,
+        });
+    }
+
+    handleDone(){
+        const list = this.state.listData;
+        const dataList = list.map((todo, index) => {
+
+            if(todo.checked){
+                return Object.assign({}, todo, {
+                    done: true,
+                });
+            }
+
+            return todo;
+        });
+
+        this.setState({
+            listData: dataList,
         });
     }
 
@@ -36,34 +112,47 @@ class ToDoList extends React.Component {
         const dataList = list.map((todo, index) =>{
              
             return (
-                <ul key={index} className='data-list'>{todo}</ul>
+                <Container key={index} className='p-2'>
+                    <Row className='p-2 bg-white border'>
+                        <Col className='col-10'>
+                            {todo.name}
+                        </Col>
+                        <Col className='col-2'>
+                            <Form.Check id={index} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, index)} disabled={todo.done} />
+                        </Col>
+                    </Row>
+                </Container>
             );
             
         });
 
         return(
-            <div className='todo-list-page'>
-                <h1 className='todo-title'> To Do Input </h1>
-                <div className='todo-input'>
-                    <input type='text' name='input-text' value={this.state.value} onChange={this.handleChange} />
-                    <button className='newtask-button' onClick={() => this.handleSubmit()}> Add new task </button>
-                </div>
-                <div>
-                    <h1 className='todo-title'>To Do List</h1>
-                    <div>
-                        <button className='todo-button-success'>All</button>
-                        <button className='todo-button-success'>Done</button>
-                        <button className='todo-button-success'>Todo</button>
-                    </div>
-                </div>
-                <div className='todo-list'>
+            <Container className='p-5'>
+                <h1 className='header'>To Do Input</h1>
+                <Container className='p-5 bg-light'>
+                    <Container className='d-grid gap-2'>
+                        <Form.Control type='text' value={this.state.value} onChange={this.handleChange} />
+                        <Button type='button' variant='primary' size='lg' onClick={() => this.handleSubmit()}> Add new task </Button>
+                    </Container>
+                </Container>
+                <Container className='p-5'>
+                    <h1 className='header'>To Do List</h1>
+                    <Container className='gap-2 d-flex'>
+                        <Button className='col-3 me-auto' type='button' variant='primary' size='lg' onClick={() => this.handleCheckAll()}>All</Button>
+                        <Button className='col-3' type='button' variant='primary' size='lg' onClick={() => this.handleDone()}>Done</Button>
+                        <Button className='col-3 ms-auto' type='button' variant='primary' size='lg'>Todo</Button>
+                    </Container>
+                </Container>
+                <Container className='p-5 bg-light'>
                     {dataList}
-                </div>
-                <div>
-                    <button className='todo-button-delete'>Delete done task</button>
-                    <button className='todo-button-delete'>Delete all task</button>
-                </div>
-            </div>
+                </Container>
+                <Container className='p-5'>
+                    <Container className='gap-2 d-flex'>
+                        <Button className='col-3 me-auto' type='button' variant='danger' size='lg'>Delete done task</Button>
+                        <Button className='col-3 ms-auto' type='button' variant='danger' size='lg'>Delete all task</Button>
+                    </Container>
+                </Container>
+            </Container>
         );
         
     }
