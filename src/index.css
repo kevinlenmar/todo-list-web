@@ -2,6 +2,16 @@
     text-align: center;
 }
 
+.crossed-line {
+    text-decoration: line-through;
+    color: #f44336;
+}
+
+.todo-active {
+    font-weight: bold;
+    color: #008CBA;
+}
+
 .todo-list-page {
     height: auto;
     width: 60%;

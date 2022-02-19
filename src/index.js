@@ -37,6 +37,7 @@ class ToDoList extends React.Component {
             name: value,
             checked: false,
             done: false,
+            todo: false,
         });
 
         this.setState({
@@ -91,10 +92,41 @@ class ToDoList extends React.Component {
     handleDone(){
         const list = this.state.listData;
         const dataList = list.map((todo, index) => {
-
+            
             if(todo.checked){
+
+                const element = document.getElementById(index);
+                if(todo.todo){
+                    element.classList.remove('todo-active');
+                }
+                element.classList.add('crossed-line');
+
                 return Object.assign({}, todo, {
                     done: true,
+                });
+            }
+
+            return todo;
+        });
+
+        this.setState({
+            listData: dataList,
+        });
+    }
+
+    handleTodo(){
+        const list = this.state.listData;
+        const dataList = list.map((todo, index) => {
+            
+            if(todo.checked){
+
+                if(todo.done === false){
+                    const element = document.getElementById(index);
+                    element.classList.add('todo-active');
+                }
+                
+                return Object.assign({}, todo, {
+                    todo: true,
                 });
             }
 
@@ -114,7 +146,7 @@ class ToDoList extends React.Component {
             return (
                 <Container key={index} className='p-2'>
                     <Row className='p-2 bg-white border'>
-                        <Col className='col-10'>
+                        <Col id={index} className='col-10'>
                             {todo.name}
                         </Col>
                         <Col className='col-2'>
@@ -123,7 +155,6 @@ class ToDoList extends React.Component {
                     </Row>
                 </Container>
             );
-            
         });
 
         return(
@@ -140,7 +171,7 @@ class ToDoList extends React.Component {
                     <Container className='gap-2 d-flex'>
                         <Button className='col-3 me-auto' type='button' variant='primary' size='lg' onClick={() => this.handleCheckAll()}>All</Button>
                         <Button className='col-3' type='button' variant='primary' size='lg' onClick={() => this.handleDone()}>Done</Button>
-                        <Button className='col-3 ms-auto' type='button' variant='primary' size='lg'>Todo</Button>
+                        <Button className='col-3 ms-auto' type='button' variant='primary' size='lg' onClick={() => this.handleTodo()}>Todo</Button>
                     </Container>
                 </Container>
                 <Container className='p-5 bg-light'>
