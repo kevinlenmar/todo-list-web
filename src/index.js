@@ -21,6 +21,9 @@ class ToDoList extends React.Component {
         this.handleCheckAll = this.handleCheckAll.bind(this);
         this.handleOnCheck = this.handleOnCheck.bind(this);
         this.handleDone = this.handleDone.bind(this);
+        this.handleTodo = this.handleTodo.bind(this);
+        this.handleDeleteDone = this.handleDeleteDone.bind(this);
+        this.handleDeleteAll = this.handleDeleteAll.bind(this);
     }
 
     handleChange(event) {
@@ -31,9 +34,18 @@ class ToDoList extends React.Component {
     }
     
     handleSubmit() {
-
+        
         let { listData, value } = this.state;
+        const list = listData;
+        let id = 1;
+
+        if(list.length > 0){
+            const item = list.slice(-1);
+            id = 1 + item[0].id;
+        }
+
         listData.push({
+            id: id,
             name: value,
             checked: false,
             done: false,
@@ -68,7 +80,7 @@ class ToDoList extends React.Component {
 
         const dataList = list.map((todo, index) => {
             
-            if(position === index){
+            if(position === todo.id){
                 if(checked){
                     return Object.assign({}, todo, {
                         checked: true,
@@ -95,7 +107,7 @@ class ToDoList extends React.Component {
             
             if(todo.checked){
 
-                const element = document.getElementById(index);
+                const element = document.getElementById(todo.id);
                 if(todo.todo){
                     element.classList.remove('todo-active');
                 }
@@ -121,7 +133,7 @@ class ToDoList extends React.Component {
             if(todo.checked){
 
                 if(todo.done === false){
-                    const element = document.getElementById(index);
+                    const element = document.getElementById(todo.id);
                     element.classList.add('todo-active');
                 }
                 
@@ -138,19 +150,36 @@ class ToDoList extends React.Component {
         });
     }
 
+    handleDeleteDone(){
+        const list = this.state.listData;
+        const dataList = list.filter(e => e.done === false);
+
+        this.setState({
+            listData: dataList,
+        });
+    }
+
+    handleDeleteAll(){
+        this.setState({
+            listData: []
+        });
+
+        console.log(this.state.listData);
+    }
+
     render() {
         const list = this.state.listData;
 
         const dataList = list.map((todo, index) =>{
              
             return (
-                <Container key={index} className='p-2'>
-                    <Row className='p-2 bg-white border'>
-                        <Col id={index} className='col-10'>
+                <Container key={todo.id} className='p-2'>
+                    <Row className='bg-white border'>
+                        <Col id={todo.id} className='col-10'>
                             {todo.name}
                         </Col>
                         <Col className='col-2'>
-                            <Form.Check id={index} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, index)} disabled={todo.done} />
+                            <Form.Check id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
                         </Col>
                     </Row>
                 </Container>
@@ -179,8 +208,8 @@ class ToDoList extends React.Component {
                 </Container>
                 <Container className='p-5'>
                     <Container className='gap-2 d-flex'>
-                        <Button className='col-3 me-auto' type='button' variant='danger' size='lg'>Delete done task</Button>
-                        <Button className='col-3 ms-auto' type='button' variant='danger' size='lg'>Delete all task</Button>
+                        <Button className='col-3 me-auto' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteDone()}>Delete done task</Button>
+                        <Button className='col-3 ms-auto' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteAll()}>Delete all task</Button>
                     </Container>
                 </Container>
             </Container>
