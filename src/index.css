@@ -4,17 +4,30 @@
 
 .crossed-line {
     text-decoration: line-through;
-    color: #f44336;
+    color: #f44336 !important;
 }
 
 .todo-active {
-    font-weight: bold;
-    color: #008CBA;
+    font-weight: bold !important;
+    color: #008CBA !important;
 }
 
 .error-span {
     font-weight: bold;
     color: #f44336;
+}
+
+input[type=checkbox] {
+    cursor: pointer;
+}
+
+svg {
+    cursor: pointer;
+}
+
+.table-wrapper {
+    max-height: 500px;
+    overflow-x: auto;
 }
 
 .todo-list-page {

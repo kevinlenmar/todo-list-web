@@ -5,8 +5,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Row, Col }  from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
-import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
-import { AiFillCheckCircle } from "react-icons/ai";
+import { BsFillPencilFill, BsFillTrashFill, BsCheckSquareFill } from "react-icons/bs";
 
 class ToDoList extends React.Component {
 
@@ -19,6 +18,7 @@ class ToDoList extends React.Component {
             renderUpdate: false,
             errorTodoInput: '',
             errorTodoUpdate: '',
+            checkAll: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -80,17 +80,18 @@ class ToDoList extends React.Component {
         }
     }
 
-    handleCheckAll() {
+    handleCheckAll(isCheck) {
         const list = this.state.listData;
 
         const dataList = list.map((todo, index) => {
             return Object.assign({}, todo, {
-                checked: true, 
+                checked: !isCheck, 
             });
         });
 
         this.setState({
             listData: dataList,
+            checkAll: !isCheck,
         });
     }
 
@@ -106,6 +107,10 @@ class ToDoList extends React.Component {
                     });
                 }
                 else{
+                    const element = document.getElementById(todo.id);
+                    if(todo.todo){
+                        element.classList.remove('todo-active');
+                    }
                     return Object.assign({}, todo, {
                         checked: false,
                     });
@@ -243,27 +248,27 @@ class ToDoList extends React.Component {
                 <Container key={todo.id} className='p-2'>
                         {this.state.renderUpdate === todo.id ? (
                             <Row>
-                                <Col id={todo.id} className='col-11'>
-                                    <Form.Control id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
+                                <Col className='col-11'>
+                                    <Form.Control className='col-11' id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
                                     {this.state.errorTodoUpdate.length !== 0 ?(
                                         <span className='error-span'>{this.state.errorTodoUpdate}</span>
                                     ) : (
                                         <span></span>
                                     )}
                                 </Col>
-                                <Col className='col-1 d-flex'>
-                                    <AiFillCheckCircle onClick={() => this.handleUpdate(todo.id)}/>
+                                <Col className='col-1 d-flex mt-2'>
+                                    <BsCheckSquareFill className='col-3 text-success' title='Update Task' onClick={() => this.handleUpdate(todo.id)}/>
                                 </Col>
                             </Row>
                         ) : (
-                            <Row className='bg-white border'>
-                                <Col id={todo.id} className='col-11'>
-                                    {todo.name}
+                            <Row>
+                                <Col className='col-11'>
+                                    <Form.Control className='col-11 bg-light border-0' id={todo.id} type='text' name='todoName' value={todo.name} disabled/>
                                 </Col>
-                                <Col className='col-1 d-flex'>
-                                    <Form.Check className='me-auto' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
-                                    <BsFillPencilFill onClick={() => this.handleUpdateTodo(todo.name, todo.id)}/>
-                                    <BsFillTrashFill className='ms-auto' onClick={() => this.handleDeleteTask(todo.id)}/>
+                                <Col className='col-1 d-flex mt-2'>
+                                    <Form.Check className='me-auto col-3' title='Check Task' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
+                                    <BsFillPencilFill className='col-3 mt-1 text-primary' title='Edit Task' onClick={() => this.handleUpdateTodo(todo.name, todo.id)} />
+                                    <BsFillTrashFill className='ms-auto col-3 mt-1 text-danger' title='Delete Task' onClick={() => this.handleDeleteTask(todo.id)}/>
                                 </Col>
                             </Row>
                         )}
@@ -288,12 +293,12 @@ class ToDoList extends React.Component {
                 <Container className='p-5'>
                     <h1 className='header'>To Do List</h1>
                     <Container className='gap-2 d-flex'>
-                        <Button className='col-3 me-auto' type='button' variant='primary' size='lg' onClick={() => this.handleCheckAll()}>All</Button>
+                        <Button className='col-3 me-auto' type='button' variant='primary' size='lg' onClick={() => this.handleCheckAll(this.state.checkAll)}>All</Button>
                         <Button className='col-3' type='button' variant='primary' size='lg' onClick={() => this.handleDone()}>Done</Button>
                         <Button className='col-3 ms-auto' type='button' variant='primary' size='lg' onClick={() => this.handleTodo()}>Todo</Button>
                     </Container>
                 </Container>
-                <Container className='p-5 bg-light'>
+                <Container className='p-5 bg-light table-wrapper'>
                     {dataList}
                 </Container>
                 <Container className='p-5'>
