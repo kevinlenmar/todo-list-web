@@ -3,7 +3,7 @@
 }
 
 .crossed-line {
-    text-decoration: line-through;
+    text-decoration: line-through !important;
     color: #f44336 !important;
 }
 

@@ -249,7 +249,7 @@ class ToDoList extends React.Component {
                         {this.state.renderUpdate === todo.id ? (
                             <Row>
                                 <Col className='col-11'>
-                                    <Form.Control className='col-11' id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
+                                    <Form.Control className='col-11 bg-white' id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
                                     {this.state.errorTodoUpdate.length !== 0 ?(
                                         <span className='error-span'>{this.state.errorTodoUpdate}</span>
                                     ) : (
@@ -263,7 +263,7 @@ class ToDoList extends React.Component {
                         ) : (
                             <Row>
                                 <Col className='col-11'>
-                                    <Form.Control className='col-11 bg-light border-0' id={todo.id} type='text' name='todoName' value={todo.name} disabled/>
+                                    <Form.Control className='col-11 bg-white' id={todo.id} type='text' name='todoName' value={todo.name} disabled/>
                                 </Col>
                                 <Col className='col-1 d-flex mt-2'>
                                     <Form.Check className='me-auto col-3' title='Check Task' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
