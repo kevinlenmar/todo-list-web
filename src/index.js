@@ -5,6 +5,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Row, Col }  from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
+import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
 
 class ToDoList extends React.Component {
 
@@ -24,6 +25,7 @@ class ToDoList extends React.Component {
         this.handleTodo = this.handleTodo.bind(this);
         this.handleDeleteDone = this.handleDeleteDone.bind(this);
         this.handleDeleteAll = this.handleDeleteAll.bind(this);
+        this.handleDeleteTask = this.handleDeleteTask.bind(this);
     }
 
     handleChange(event) {
@@ -167,6 +169,15 @@ class ToDoList extends React.Component {
         console.log(this.state.listData);
     }
 
+    handleDeleteTask(id){
+        const list = this.state.listData;
+        const dataList = list.filter(e => e.id !== id);
+
+        this.setState({
+            listData: dataList,
+        });
+    }
+
     render() {
         const list = this.state.listData;
 
@@ -175,11 +186,13 @@ class ToDoList extends React.Component {
             return (
                 <Container key={todo.id} className='p-2'>
                     <Row className='bg-white border'>
-                        <Col id={todo.id} className='col-10'>
+                        <Col id={todo.id} className='col-11'>
                             {todo.name}
                         </Col>
-                        <Col className='col-2'>
-                            <Form.Check id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
+                        <Col className='col-1 d-flex'>
+                            <Form.Check className='me-auto' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
+                            <BsFillPencilFill/>
+                            <BsFillTrashFill className='ms-auto' onClick={() => this.handleDeleteTask(todo.id)}/>
                         </Col>
                     </Row>
                 </Container>
