@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Form, Row, Col }  from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
 import { BsFillPencilFill, BsFillTrashFill } from "react-icons/bs";
+import { AiFillCheckCircle } from "react-icons/ai";
 
 class ToDoList extends React.Component {
 
@@ -13,8 +14,12 @@ class ToDoList extends React.Component {
 
         super(props);
         this.state = {
-            value: '',
-            listData: []
+            todoInput: '',
+            todoUpdate: '',
+            listData: [],
+            renderUpdate: false,
+            errorTodoInput: false,
+            errorTodoUpdate: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -26,38 +31,52 @@ class ToDoList extends React.Component {
         this.handleDeleteDone = this.handleDeleteDone.bind(this);
         this.handleDeleteAll = this.handleDeleteAll.bind(this);
         this.handleDeleteTask = this.handleDeleteTask.bind(this);
+        this.handleUpdateTodo = this.handleUpdateTodo.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
     }
 
     handleChange(event) {
 
+        const value = event.target.value;
         this.setState({
-            value: event.target.value
+            [event.target.name]: value,
         });
     }
     
     handleSubmit() {
         
-        let { listData, value } = this.state;
-        const list = listData;
-        let id = 1;
+        let { listData, todoInput } = this.state;
 
-        if(list.length > 0){
-            const item = list.slice(-1);
-            id = 1 + item[0].id;
+        if(todoInput.trim() === ''){
+
+            this.setState({
+                errorTodoInput: true,
+            });
+
+        }else{
+
+            const list = listData;
+            let id = 1;
+
+            if(list.length > 0){
+                const item = list.slice(-1);
+                id = 1 + item[0].id;
+            }
+
+            listData.push({
+                id: id,
+                name: todoInput,
+                checked: false,
+                done: false,
+                todo: false,
+            });
+
+            this.setState({
+                listData: listData,
+                todoInput: '',
+                errorTodoInput: false,
+            });
         }
-
-        listData.push({
-            id: id,
-            name: value,
-            checked: false,
-            done: false,
-            todo: false,
-        });
-
-        this.setState({
-            listData: listData,
-            value: '',
-        });
     }
 
     handleCheckAll() {
@@ -178,6 +197,36 @@ class ToDoList extends React.Component {
         });
     }
 
+    handleUpdateTodo(todoInput, id){
+        this.setState({
+            todoUpdate: todoInput,
+            renderUpdate: id,
+        });
+    }
+
+    handleUpdate(id){
+
+        let { listData, todoUpdate } = this.state;
+        const list = listData;
+        
+        const dataList = list.map((todo, index) => {
+            
+            if(todo.id === id){
+                
+                return Object.assign({}, todo, {
+                    name: todoUpdate,
+                });
+            }
+
+            return todo;
+        });
+
+        this.setState({
+            listData: dataList,
+            renderUpdate: false,
+        });
+    }
+
     render() {
         const list = this.state.listData;
 
@@ -185,16 +234,27 @@ class ToDoList extends React.Component {
              
             return (
                 <Container key={todo.id} className='p-2'>
-                    <Row className='bg-white border'>
-                        <Col id={todo.id} className='col-11'>
-                            {todo.name}
-                        </Col>
-                        <Col className='col-1 d-flex'>
-                            <Form.Check className='me-auto' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
-                            <BsFillPencilFill/>
-                            <BsFillTrashFill className='ms-auto' onClick={() => this.handleDeleteTask(todo.id)}/>
-                        </Col>
-                    </Row>
+                        {this.state.renderUpdate === todo.id ? (
+                            <Row>
+                                <Col id={todo.id} className='col-11'>
+                                    <Form.Control id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
+                                </Col>
+                                <Col className='col-1 d-flex'>
+                                    <AiFillCheckCircle onClick={() => this.handleUpdate(todo.id)}/>
+                                </Col>
+                            </Row>
+                        ) : (
+                            <Row className='bg-white border'>
+                                <Col id={todo.id} className='col-11'>
+                                    {todo.name}
+                                </Col>
+                                <Col className='col-1 d-flex'>
+                                    <Form.Check className='me-auto' id={todo.id} type='checkbox' name='checkbox' checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done} />
+                                    <BsFillPencilFill onClick={() => this.handleUpdateTodo(todo.name, todo.id)}/>
+                                    <BsFillTrashFill className='ms-auto' onClick={() => this.handleDeleteTask(todo.id)}/>
+                                </Col>
+                            </Row>
+                        )}
                 </Container>
             );
         });
@@ -204,7 +264,12 @@ class ToDoList extends React.Component {
                 <h1 className='header'>To Do Input</h1>
                 <Container className='p-5 bg-light'>
                     <Container className='d-grid gap-2'>
-                        <Form.Control type='text' value={this.state.value} onChange={this.handleChange} />
+                        <Form.Control type='text' name='todoInput' value={this.state.todoInput} onChange={this.handleChange} />
+                        {this.state.errorTodoInput ? (
+                            <span>Todo Input cannot be empty</span>
+                        ): (
+                            <span></span>
+                        )}
                         <Button type='button' variant='primary' size='lg' onClick={() => this.handleSubmit()}> Add new task </Button>
                     </Container>
                 </Container>
