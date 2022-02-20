@@ -185,8 +185,6 @@ class ToDoList extends React.Component {
         this.setState({
             listData: []
         });
-
-        console.log(this.state.listData);
     }
 
     handleDeleteTask(id){
