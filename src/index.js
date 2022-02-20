@@ -11,15 +11,14 @@ import { AiFillCheckCircle } from "react-icons/ai";
 class ToDoList extends React.Component {
 
     constructor(props) {
-
         super(props);
         this.state = {
             todoInput: '',
             todoUpdate: '',
             listData: [],
             renderUpdate: false,
-            errorTodoInput: false,
-            errorTodoUpdate: false,
+            errorTodoInput: '',
+            errorTodoUpdate: '',
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -44,17 +43,19 @@ class ToDoList extends React.Component {
     }
     
     handleSubmit() {
-        
         let { listData, todoInput } = this.state;
 
         if(todoInput.trim() === ''){
-
             this.setState({
-                errorTodoInput: true,
+                errorTodoInput: 'Todo cannot be empty',
             });
-
-        }else{
-
+        }
+        else if(listData.filter(e => e.name.trim() === todoInput.trim()).length > 0){
+            this.setState({
+                errorTodoInput: 'Todo has the same name in the list',
+            });
+        }
+        else{
             const list = listData;
             let id = 1;
 
@@ -74,16 +75,15 @@ class ToDoList extends React.Component {
             this.setState({
                 listData: listData,
                 todoInput: '',
-                errorTodoInput: false,
+                errorTodoInput: '',
             });
         }
     }
 
     handleCheckAll() {
-
         const list = this.state.listData;
+
         const dataList = list.map((todo, index) => {
-            
             return Object.assign({}, todo, {
                 checked: true, 
             });
@@ -95,12 +95,10 @@ class ToDoList extends React.Component {
     }
 
     handleOnCheck(event, position) {
-
         const checked = event.target.checked;
         const list = this.state.listData;
 
         const dataList = list.map((todo, index) => {
-            
             if(position === todo.id){
                 if(checked){
                     return Object.assign({}, todo, {
@@ -124,10 +122,9 @@ class ToDoList extends React.Component {
 
     handleDone(){
         const list = this.state.listData;
-        const dataList = list.map((todo, index) => {
-            
-            if(todo.checked){
 
+        const dataList = list.map((todo, index) => {
+            if(todo.checked){
                 const element = document.getElementById(todo.id);
                 if(todo.todo){
                     element.classList.remove('todo-active');
@@ -149,10 +146,9 @@ class ToDoList extends React.Component {
 
     handleTodo(){
         const list = this.state.listData;
-        const dataList = list.map((todo, index) => {
-            
-            if(todo.checked){
 
+        const dataList = list.map((todo, index) => {
+            if(todo.checked){
                 if(todo.done === false){
                     const element = document.getElementById(todo.id);
                     element.classList.add('todo-active');
@@ -205,39 +201,55 @@ class ToDoList extends React.Component {
     }
 
     handleUpdate(id){
-
         let { listData, todoUpdate } = this.state;
-        const list = listData;
-        
-        const dataList = list.map((todo, index) => {
-            
-            if(todo.id === id){
-                
-                return Object.assign({}, todo, {
-                    name: todoUpdate,
-                });
-            }
 
-            return todo;
-        });
+        if(todoUpdate.trim() === ''){
+            this.setState({
+                errorTodoUpdate: 'Todo cannot be empty',
+            });
+        }
+        else if(listData.filter(e => e.id !== id && e.name.trim() === todoUpdate.trim()).length > 0 ){
+            this.setState({
+                errorTodoUpdate: 'Todo has the same name in the list',
+            });
+        }
+        else{
+            const list = listData;
 
-        this.setState({
-            listData: dataList,
-            renderUpdate: false,
-        });
+            const dataList = list.map((todo, index) => {
+                if(todo.id === id){
+                    
+                    return Object.assign({}, todo, {
+                        name: todoUpdate,
+                    });
+                }
+
+                return todo;
+            });
+
+            this.setState({
+                listData: dataList,
+                renderUpdate: false,
+                errorTodoUpdate: '',
+            });
+        }
     }
 
     render() {
         const list = this.state.listData;
 
         const dataList = list.map((todo, index) =>{
-             
             return (
                 <Container key={todo.id} className='p-2'>
                         {this.state.renderUpdate === todo.id ? (
                             <Row>
                                 <Col id={todo.id} className='col-11'>
                                     <Form.Control id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
+                                    {this.state.errorTodoUpdate.length !== 0 ?(
+                                        <span className='error-span'>{this.state.errorTodoUpdate}</span>
+                                    ) : (
+                                        <span></span>
+                                    )}
                                 </Col>
                                 <Col className='col-1 d-flex'>
                                     <AiFillCheckCircle onClick={() => this.handleUpdate(todo.id)}/>
@@ -265,8 +277,8 @@ class ToDoList extends React.Component {
                 <Container className='p-5 bg-light'>
                     <Container className='d-grid gap-2'>
                         <Form.Control type='text' name='todoInput' value={this.state.todoInput} onChange={this.handleChange} />
-                        {this.state.errorTodoInput ? (
-                            <span>Todo Input cannot be empty</span>
+                        {this.state.errorTodoInput.length !== 0 ? (
+                            <span className='error-span'>{this.state.errorTodoInput}</span>
                         ): (
                             <span></span>
                         )}

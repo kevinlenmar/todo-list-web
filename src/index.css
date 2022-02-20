@@ -12,6 +12,11 @@
     color: #008CBA;
 }
 
+.error-span {
+    font-weight: bold;
+    color: #f44336;
+}
+
 .todo-list-page {
     height: auto;
     width: 60%;
