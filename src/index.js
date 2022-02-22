@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Form, Row, Col }  from 'react-bootstrap';
+import { Button, Form }  from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
 import { BsFillPencilFill, BsFillTrashFill, BsCheckSquareFill, BsFillBookmarkCheckFill, BsFillBookmarkPlusFill, BsFillPatchCheckFill } from "react-icons/bs";
 
@@ -49,12 +49,12 @@ class ToDoList extends React.Component {
 
         if(todoInput.trim() === ''){
             this.setState({
-                errorTodoInput: 'Todo cannot be empty',
+                errorTodoInput: 'Task cannot be empty',
             });
         }
         else if(listData.filter(e => e.name.trim() === todoInput.trim()).length > 0){
             this.setState({
-                errorTodoInput: 'Todo has the same name in the list',
+                errorTodoInput: 'Task has the same name in the list',
             });
         }
         else{
@@ -212,12 +212,12 @@ class ToDoList extends React.Component {
 
         if(todoUpdate.trim() === ''){
             this.setState({
-                errorTodoUpdate: 'Todo cannot be empty',
+                errorTodoUpdate: 'Task cannot be empty',
             });
         }
         else if(listData.filter(e => e.id !== id && e.name.trim() === todoUpdate.trim()).length > 0 ){
             this.setState({
-                errorTodoUpdate: 'Todo has the same name in the list',
+                errorTodoUpdate: 'Task has the same name in the list',
             });
         }
         else{
@@ -274,31 +274,39 @@ class ToDoList extends React.Component {
             return (
                     <Container key={todo.id} className='col-sm-12 p-2'>
                         {this.state.renderUpdate === todo.id ? (
-                            <Row className='col-sm-12 bg-white d-flex flex-row'>
-                                <Col className='col-sm-10'>
-                                    <Form.Control className='col-sm-12 bg-white' id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
-                                    {this.state.errorTodoUpdate.length !== 0 ?(
-                                        <span className='error-span'>{this.state.errorTodoUpdate}</span>
-                                    ) : (
-                                        <span></span>
-                                    )}
-                                </Col>
-                                <Col className='col-sm-2 d-sm-flex flex-row d-grid gap-2 justify-content-center align-items-center align-content-stretch'>
-                                    <BsCheckSquareFill className='text-primary' title='Update Task' onClick={() => this.handleUpdate(todo.id)}/>
-                                </Col>
-                            </Row>
+                            <Container className='col-sm-12 form-control bg-white d-sm-flex flex-row justify-content-sm-end align-items-center align-content-stretch'>
+                                <Container className='d-sm-flex flex-row'>
+                                    <Form.Control className='bg-white' id={todo.id} type='text' name='todoUpdate' value={this.state.todoUpdate} onChange={this.handleChange} />
+                                        {this.state.errorTodoUpdate.length !== 0 ?(
+                                            <span className='error-span'>{this.state.errorTodoUpdate}</span>
+                                        ) : (
+                                            <span></span>
+                                        )}
+                                </Container>
+                                <Container className='d-inline-flex flex-row justify-content-end align-items-center align-content-stretch'>
+                                    <div className='d-inline-flex flex-row'>
+                                        <BsCheckSquareFill className='text-primary' title='Update Task' onClick={() => this.handleUpdate(todo.id)}/>
+                                    </div>
+                                </Container>
+                            </Container>
                         ) : (
-                            <Row className='col-sm-12 bg-white d-sm-flex flex-row'>
-                                <Col className='col-sm-10'>
-                                    <Form.Control className='col-sm-12 bg-white' id={todo.id} type='text' name='todoName' value={todo.name} disabled/>
-                                </Col>
-                                <Col className='col-sm-2 d-sm-flex flex-row d-grid gap-3 justify-content-end align-items-center align-content-stretch'>
+                            <Container className='col-sm-12 form-control bg-white d-sm-flex flex-row justify-content-sm-end align-items-center align-content-stretch'>
+                                <Container className='d-sm-flex flex-row'>
+                                    <Form.Control className='bg-white' id={todo.id} type='text' name='todoName' value={todo.name} disabled/>
+                                </Container>
+                                <Container className='d-inline-flex flex-row gap-3 justify-content-end align-items-center align-content-stretch'>
                                     <Form.Check title='Check Task' id={todo.id} checked={todo.checked} onChange={(event) => this.handleOnCheck(event, todo.id)} disabled={todo.done || todo.todo} />
-                                    <BsFillPatchCheckFill className='text-success' title='Done Task' onClick={() => this.handleDoneTask(todo.id)} />
-                                    <BsFillPencilFill className='text-info' title='Edit Task' onClick={() => this.handleUpdateTodo(todo.name, todo.id)} />
-                                    <BsFillTrashFill className='text-danger' title='Delete Task' onClick={() => this.handleDeleteTask(todo.id)}/>
-                                </Col>
-                            </Row>
+                                    <div className='d-inline-flex flex-row'>
+                                        <BsFillPatchCheckFill className='text-success' title='Done Task' onClick={() => this.handleDoneTask(todo.id)} />
+                                    </div>
+                                    <div className='d-inline-flex flex-row'>
+                                        <BsFillPencilFill className='text-info' title='Edit Task' onClick={() => this.handleUpdateTodo(todo.name, todo.id)} />
+                                    </div>
+                                    <div className='d-inline-flex flex-row'>
+                                        <BsFillTrashFill className='text-danger' title='Delete Task' onClick={() => this.handleDeleteTask(todo.id)}/>
+                                    </div>
+                                </Container>
+                            </Container>
                         )}
                     </Container>
             );
@@ -323,10 +331,14 @@ class ToDoList extends React.Component {
                     </Container>
                     <Container className='col-sm-12 mt-3 table-wrapper'>
                         {this.state.hasList ? (
-                            <Container className='col-sm-12 p-2 d-sm-flex flex-row d-grid gap-3 justify-content-end align-items-center align-content-stretch'>
+                            <Container className='col-sm-12 p-2 d-inline-flex flex-row gap-3 justify-content-end align-items-center align-content-stretch'>
                                 <Form.Check title='Group Check' checked={this.state.checkAll} onChange={(event) => this.handleCheckAll(event)}/>
-                                <BsFillBookmarkCheckFill className='text-success' title='Done Task' onClick={() => this.handleDone()} />
-                                <BsFillBookmarkPlusFill className='text-primary' title='To Do Task' onClick={() => this.handleTodo()} />
+                                <div className='d-inline-flex flex-row'>
+                                    <BsFillBookmarkCheckFill className='text-success' title='Done Task' onClick={() => this.handleDone()} />
+                                </div>
+                                <div className='d-inline-flex flex-row'>
+                                    <BsFillBookmarkPlusFill className='text-primary' title='To Do Task' onClick={() => this.handleTodo()} />
+                                </div>
                             </Container>
                         ) : (
                             <span></span>
@@ -335,10 +347,14 @@ class ToDoList extends React.Component {
                     </Container>
                 </Container>
                 <Container className='col-sm-12 p-5'>
-                    <Container className='col-sm-12 d-grid gap-2 d-sm-flex justify-content-sm-between'>
-                        <Button className='col-sm-3' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteDone()}>Delete done task</Button>
-                        <Button className='col-sm-3' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteAll()}>Delete all task</Button>
-                    </Container>
+                    {this.state.hasList ? (
+                        <Container className='col-sm-12 d-grid gap-2 d-sm-flex justify-content-sm-between'>
+                            <Button className='col-sm-3' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteDone()}>Delete done task</Button>
+                            <Button className='col-sm-3' type='button' variant='danger' size='lg' onClick={() => this.handleDeleteAll()}>Delete all task</Button>
+                        </Container>
+                    ) : (
+                        <span></span>
+                    )}
                 </Container>
             </Container>
         );

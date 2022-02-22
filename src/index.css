@@ -30,6 +30,12 @@ input[name="todoName"] {
     border: 0;
 }
 
+input[name="todoUpdate"] {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
 .table-wrapper {
     max-height: 500px;
     overflow-x: auto;
